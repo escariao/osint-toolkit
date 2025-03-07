@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Toolkit - WHOIS Lookup</title>
+</head>
+<body>
+    <h1>Consulta WHOIS</h1>
+    <form method="POST">
+        <input type="text" name="domain" placeholder="Digite um domínio..." required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    {% if data %}
+        <h2>Resultados</h2>
+        <p><strong>Domínio:</strong> {{ data.domain_name }}</p>
+        <p><strong>Registrar:</strong> {{ data.registrar }}</p>
+        <p><strong>Criado em:</strong> {{ data.creation_date }}</p>
+        <p><strong>Expira em:</strong> {{ data.expiration_date }}</p>
+    {% endif %}
+</body>
+</html>
