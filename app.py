@@ -34,11 +34,9 @@ def home():
 
     if request.method == "POST":
         query = request.form.get("query")
+        print(f"🔍 Entrada do usuário recebida: {query}")  # Log para verificar o que está chegando
 
-        # Depuração: Verifica o que o usuário enviou
-        print(f"🔍 Entrada do usuário: {query}")
-
-        if not query:
+        if not query or query.strip() == "":
             error = "Nenhum dado foi enviado!"
             return render_template("index.html", error=error)
 
