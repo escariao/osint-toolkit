@@ -1,5 +1,5 @@
 Flask
+requests
+shodan
 python-whois
 gunicorn
-shodan
-requests
