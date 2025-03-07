@@ -6,7 +6,7 @@ import whois
 app = Flask(__name__)
 
 # CHAVE DA API SHODAN (⚠️ Substitua pela sua chave da Shodan)
-SHODAN_API_KEY = "SUA_CHAVE_AQUI"
+SHODAN_API_KEY = "h53uKKpV70ZXZBKtJVwSeM3hSSlVc7XJ"
 
 def resolve_domain(domain):
     """Resolve um domínio para um endereço IP."""
