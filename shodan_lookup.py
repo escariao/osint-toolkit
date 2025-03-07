@@ -1,19 +1,18 @@
-import shodan
-import os
+import requests
 
-# Obtém a chave da API a partir das variáveis de ambiente
-SHODAN_API_KEY = os.getenv("SHODAN_API_KEY")
-api = shodan.Shodan(SHODAN_API_KEY)
+# Substitua pela sua chave de API do Shodan
+SHODAN_API_KEY = "h53uKKpV70ZXZBKtJVwSeM3hSSlVc7XJ"
 
 def get_shodan_info(ip):
     try:
-        result = api.host(ip)
-        return {
-            "ip": result["ip_str"],
-            "org": result.get("org", "N/A"),
-            "os": result.get("os", "N/A"),
-            "vulnerabilities": result.get("vulns", []),
-            "open_ports": result.get("ports", [])
-        }
-    except shodan.APIError as e:
-        return {"error": f"Erro na API do Shodan: {e}"}
+        url = f"https://api.shodan.io/shodan/host/{ip}?key={SHODAN_API_KEY}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 404:
+            return {"error": "Nenhum dado encontrado no Shodan para esse IP."}
+        else:
+            return {"error": f"Erro do Shodan: {response.status_code}"}
+    except Exception as e:
+        return {"error": f"Erro ao conectar com a API do Shodan: {str(e)}"}
