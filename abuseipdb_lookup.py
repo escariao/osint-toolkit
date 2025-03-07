@@ -1,7 +1,7 @@
 import requests
 
-# Substitua pela sua chave de API do AbuseIPDB
 ABUSEIPDB_API_KEY = "957a1c90419b222a37b8b305685cf888edfa6de0c9f2669c74c33955dba22d2d49520b203889d6cc"
+ABUSEIPDB_API_URL = "https://api.abuseipdb.com/api/v2/check"
 
 def get_abuseipdb_info(ip):
     headers = {
@@ -13,8 +13,8 @@ def get_abuseipdb_info(ip):
         "maxAgeInDays": 90
     }
     try:
-        response = requests.get("https://api.abuseipdb.com/api/v2/check", headers=headers, params=params)
-
+        response = requests.get(ABUSEIPDB_API_URL, headers=headers, params=params)
+        
         if response.status_code == 200:
             return response.json()
         elif response.status_code == 404:
