@@ -19,7 +19,7 @@ def home():
     error = None
 
     if request.method == "POST":
-        user_input = request.form["ip"].strip()
+        user_input = request.form.get("query", "").strip()  # Aqui corrigimos o nome do campo!
 
         if not user_input:
             error = "Nenhum dado foi enviado!"
