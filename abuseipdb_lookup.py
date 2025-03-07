@@ -1,7 +1,7 @@
 import requests
 
 # Substitua pela sua chave de API do AbuseIPDB
-ABUSEIPDB_API_KEY = "SUA_ABUSEIPDB_API_KEY"
+ABUSEIPDB_API_KEY = "957a1c90419b222a37b8b305685cf888edfa6de0c9f2669c74c33955dba22d2d49520b203889d6cc"
 
 def get_abuseipdb_info(ip):
     headers = {
