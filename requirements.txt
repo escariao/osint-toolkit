@@ -1,3 +1,4 @@
 Flask
 python-whois
 gunicorn
+shodan

@@ -28,5 +28,27 @@
             </div>
         {% endif %}
     </div>
+{% if shodan_data %}
+    <div class="resultado">
+        <h2>Dados do Shodan</h2>
+        <p><strong>IP:</strong> {{ shodan_data.ip }}</p>
+        <p><strong>Organização:</strong> {{ shodan_data.org }}</p>
+        <p><strong>Sistema Operacional:</strong> {{ shodan_data.os }}</p>
+        <p><strong>Portas Abertas:</strong> {{ shodan_data.open_ports }}</p>
+        <p><strong>Vulnerabilidades:</strong> 
+            {% if shodan_data.vulnerabilities %}
+                <ul>
+                    {% for vuln in shodan_data.vulnerabilities %}
+                        <li>{{ vuln }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                Nenhuma vulnerabilidade encontrada.
+            {% endif %}
+        </p>
+    </div>
+{% endif %}
+
+
 </body>
 </html>
