@@ -9,10 +9,10 @@
 <body>
     <div class="container">
         <h1>Consulta WHOIS</h1>
-        <form method="POST">
-            <input type="text" name="domain" placeholder="Digite um domínio..." required>
-            <button type="submit">Buscar</button>
-        </form>
+            <form method="POST">
+                <input type="text" name="query" placeholder="Digite um domínio..." required>
+                <button type="submit">Buscar</button>
+            </form>
 
         {% if error %}
             <p style="color: red;">{{ error }}</p>
