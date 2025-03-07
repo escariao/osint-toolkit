@@ -1,13 +1,12 @@
 import requests
 
-# Substitua pela sua chave de API do Shodan
 SHODAN_API_KEY = "h53uKKpV70ZXZBKtJVwSeM3hSSlVc7XJ"
 
 def get_shodan_info(ip):
     try:
         url = f"https://api.shodan.io/shodan/host/{ip}?key={SHODAN_API_KEY}"
         response = requests.get(url)
-
+        
         if response.status_code == 200:
             return response.json()
         elif response.status_code == 404:
