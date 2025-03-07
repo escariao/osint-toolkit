@@ -1,6 +1,6 @@
 import requests
 
-SHODAN_API_KEY = "h53uKKpV70ZXZBKtJVwSeM3hSSlVc7XJ"
+SHODAN_API_KEY = "QqTd1p9CocJW9TbgI4qCroTnVbyWsrE4"
 
 def get_shodan_info(ip):
     try:
