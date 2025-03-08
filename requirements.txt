@@ -1,4 +1,5 @@
-Flask
-python-whois
-gunicorn
-shodan
+Flask==2.2.3
+requests==2.31.0
+beautifulsoup4==4.12.2
+dnspython==2.3.0
+python-whois==0.8.0
