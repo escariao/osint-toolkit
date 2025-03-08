@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
 import time
-from email_breach_checker import fetch_leaked_emails
-from social_scraper import fetch_social_profiles
-from dns_lookup import fetch_dns_records
-from whois_lookup import fetch_whois_data
-from vulnerability_checker import fetch_vulnerabilities
-from blacklist_check import check_blacklist
+from modules.email_breach_checker import fetch_leaked_emails
+from modules.social_scraper import fetch_social_profiles
+from modules.dns_lookup import fetch_dns_records
+from modules.whois_lookup import fetch_whois_data
+from modules.vulnerability_checker import fetch_vulnerabilities
+from modules.blacklist_check import check_blacklist
 
 app = Flask(__name__)
 
