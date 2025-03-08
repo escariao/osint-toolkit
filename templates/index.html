@@ -8,13 +8,10 @@
 </head>
 <body>
     <h1>OSINT Toolkit</h1>
-    <p>Insira um domínio ou IP para análise:</p>
-    <form action="/scan" method="POST">
-        <input type="text" name="target" placeholder="exemplo.com ou 192.168.1.1" required>
-        <button type="submit">Analisar</button>
+    <form method="POST">
+        <label for="domain">Digite o domínio:</label>
+        <input type="text" id="domain" name="domain" required>
+        <button type="submit">Buscar</button>
     </form>
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
 </body>
 </html>

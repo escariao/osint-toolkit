@@ -7,57 +7,58 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Resultados para: {{ result.domain }}</h1>
+    <h1>Resultados para: {{ domain }}</h1>
 
-    <h2>📧 Emails Vazados</h2>
+    <h3>📌 WHOIS</h3>
+    <pre>{{ whois_data }}</pre>
+
+    <h3>📌 Registros DNS</h3>
     <ul>
-        {% for email in result.emails %}
-            <li>{{ email }}</li>
+        {% for record, values in dns_records.items() %}
+            <li><strong>{{ record }}:</strong> {{ values }}</li>
         {% endfor %}
     </ul>
 
-<!-- rs -->
-<h2>🔗 Perfis em Redes Sociais</h2>
-{% if result.socials %}
+    <h3>📌 Emails Encontrados</h3>
     <ul>
-        {% for social in result.socials %}
-            {% if social and social != "Nenhuma rede social encontrada" %}
-                <li><a href="https://{{ social }}" target="_blank">{{ social }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Nenhuma rede social encontrada.</p>
-{% endif %}
-
-
-    <h2>🌐 Registros DNS</h2>
-    {% for record, values in result.dns_records.items() %}
-        <h3>{{ record }}</h3>
-        <ul>
-            {% for value in values %}
-                <li>{{ value }}</li>
+        {% if emails %}
+            {% for email in emails %}
+                <li>{{ email }}</li>
             {% endfor %}
-        </ul>
-    {% endfor %}
+        {% else %}
+            <li>Nenhum email encontrado.</li>
+        {% endif %}
+    </ul>
 
-    <h2>📝 Informações WHOIS</h2>
-    <p><strong>Registrador:</strong> {{ result.whois_info.registrar }}</p>
-    <p><strong>Data de Criação:</strong> {{ result.whois_info.creation_date }}</p>
-    <p><strong>Data de Expiração:</strong> {{ result.whois_info.expiration_date }}</p>
-    <p><strong>Servidores de Nome:</strong> {{ result.whois_info.name_servers }}</p>
-
-    <h2>⚠️ Vulnerabilidades Conhecidas</h2>
+    <h3>📌 Links Encontrados</h3>
     <ul>
-        {% for vuln in result.vulnerabilities %}
-            <li><a href="https://{{ vuln }}" target="_blank">{{ vuln }}</a></li>
+        {% if links %}
+            {% for link in links %}
+                <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+            {% endfor %}
+        {% else %}
+            <li>Nenhum link encontrado.</li>
+        {% endif %}
+    </ul>
+
+    <h3>📌 Metadados</h3>
+    <ul>
+        {% for key, value in metadata.items() %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
         {% endfor %}
     </ul>
 
-    <h2>🚨 Status de Blacklist</h2>
-    <p>{{ result.blacklist_status }}</p>
+    <h3>📌 Redes Sociais</h3>
+    <ul>
+        {% if social_profiles %}
+            {% for platform, url in social_profiles.items() %}
+                <li><a href="{{ url }}" target="_blank">{{ platform }}</a></li>
+            {% endfor %}
+        {% else %}
+            <li>Nenhuma rede social encontrada.</li>
+        {% endif %}
+    </ul>
 
-    <br>
-    <a href="/">← Nova Pesquisa</a>
+    <a href="/">Voltar</a>
 </body>
 </html>
