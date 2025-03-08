@@ -1,3 +1,4 @@
+# app.py
 from flask import Flask, render_template, request
 import time
 from modules.email_breach_checker import fetch_leaked_emails
@@ -18,33 +19,24 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-def get_whois_info(domain):
-    try:
-        w = whois.whois(domain)
-        return {
-            'domain_name': w.domain_name,
-            'registrar': w.registrar,
-            'creation_date': w.creation_date,
-            'expiration_date': w.expiration_date,
-            'name_servers': w.name_servers
-        }
-    except Exception as e:
-        return {'error': str(e)}
-
 @app.route('/scan', methods=['POST'])
 def scan():
     target = request.form.get('target')
     if not target:
         return render_template('index.html', error='Por favor, insira um domínio ou IP.')
-    
+
     time.sleep(2)  # Previne sobrecarga nas requisições
+
     emails = fetch_leaked_emails(target)
     socials = fetch_social_profiles(target)
     dns_records = fetch_dns_records(target)
     whois_info = fetch_whois_data(target)
     vulnerabilities = fetch_vulnerabilities(target)
     blacklist_status = check_blacklist(target)
-    
+
+    # Correção para evitar exibição errada das redes sociais
+    socials = [social for social in socials if social and social != "Nenhuma rede social encontrada"]
+
     result_data = {
         'domain': target,
         'emails': emails if emails else ['Nenhum email encontrado'],
@@ -54,7 +46,7 @@ def scan():
         'vulnerabilities': vulnerabilities if vulnerabilities else ['Nenhuma vulnerabilidade encontrada'],
         'blacklist_status': blacklist_status
     }
-    
+
     return render_template('result.html', result=result_data)
 
 def get_dns_records(domain):
