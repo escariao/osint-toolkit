@@ -3,3 +3,4 @@ requests
 shodan
 python-whois
 gunicorn
+dnspython
