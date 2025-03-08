@@ -1,5 +1,5 @@
 import re
-from dorking import google_dork
+from modules.dorking import google_dork
 import requests
 
 def fetch_leaked_emails(domain):
