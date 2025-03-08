@@ -3,119 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSINT Toolkit - Consulta WHOIS & Shodan</title>
-    
-    <!-- Bootstrap -->
+    <title>OSINT Toolkit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
-        }
-        .container {
-            max-width: 800px;
-            margin-top: 30px;
-        }
-        .card {
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-        .form-control {
-            background-color: #2a2a2a;
-            color: #ffffff;
-            border: none;
-        }
-        .form-control::placeholder {
-            color: #b0b0b0;
-        }
-        .btn-primary {
-            background-color: #ff5733;
-            border: none;
-            font-weight: bold;
-        }
-        .btn-primary:hover {
-            background-color: #e04e2e;
-        }
-        .footer {
-            text-align: center;
-            padding: 15px;
-            margin-top: 20px;
-            color: #a0a0a0;
-            font-size: 14px;
-        }
-    </style>
 </head>
-<body>
-
-<div class="container">
-    <h1 class="text-center text-warning">Consulta WHOIS & Shodan</h1>
-
-    <!-- Formulário -->
-    <div class="card">
-        <form method="POST">
-            <div class="mb-3">
-                <label for="query" class="form-label">Digite um domínio ou IP:</label>
-                <input type="text" class="form-control" name="query" placeholder="Exemplo: google.com ou 8.8.8.8" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-        </form>
+<body class="bg-dark text-white">
+    <div class="container mt-5">
+        <h1 class="text-center text-warning">OSINT Toolkit</h1>
+        <div class="card bg-secondary p-4">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Digite um domínio ou IP:</label>
+                    <input type="text" class="form-control" name="query" placeholder="Exemplo: google.com ou 8.8.8.8" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Buscar</button>
+            </form>
+        </div>
+        {% if error %}
+        <div class="alert alert-danger text-center mt-3">{{ error }}</div>
+        {% endif %}
+        {% if whois_data %}
+        <div class="card bg-secondary p-3 mt-3">
+            <h2 class="text-center">WHOIS</h2>
+            <table class="table table-dark">
+                <tr><th>Domínio</th><td>{{ whois_data.domain_name }}</td></tr>
+                <tr><th>Registrar</th><td>{{ whois_data.registrar }}</td></tr>
+                <tr><th>Criado em</th><td>{{ whois_data.creation_date }}</td></tr>
+                <tr><th>Expira em</th><td>{{ whois_data.expiration_date }}</td></tr>
+            </table>
+        </div>
+        {% endif %}
     </div>
-
-    <!-- Mensagem de erro -->
-    {% if error %}
-    <div class="alert alert-danger text-center mt-3">{{ error }}</div>
-    {% endif %}
-
-    <!-- Exibir Resultados WHOIS -->
-    {% if data %}
-    <div class="card mt-3">
-        <h2 class="text-center">Resultados WHOIS</h2>
-        <table class="table table-dark table-striped">
-            <tr><th>Domínio</th><td>{{ data['domain_name'] }}</td></tr>
-            <tr><th>Registrar</th><td>{{ data['registrar'] }}</td></tr>
-            <tr><th>Criado em</th><td>{{ data['creation_date'] }}</td></tr>
-            <tr><th>Expira em</th><td>{{ data['expiration_date'] }}</td></tr>
-        </table>
-    </div>
-    {% endif %}
-
-    <!-- Exibir Resultados SHODAN -->
-    {% if shodan_data and 'error' not in shodan_data %}
-    <div class="card mt-3">
-        <h2 class="text-center">Informações do Shodan</h2>
-        <table class="table table-dark table-striped">
-            <tr><th>IP</th><td>{{ shodan_data['ip'] }}</td></tr>
-            <tr><th>Organização</th><td>{{ shodan_data['org'] }}</td></tr>
-            <tr><th>Sistema Operacional</th><td>{{ shodan_data['os'] }}</td></tr>
-            <tr><th>Portas Abertas</th><td>{{ shodan_data['open_ports']|join(', ') }}</td></tr>
-            <tr><th>Vulnerabilidades</th>
-                <td>
-                    {% if shodan_data['vulnerabilities'] %}
-                        {% for vuln in shodan_data['vulnerabilities'] %}
-                            <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name={{ vuln }}" target="_blank">{{ vuln }}</a><br>
-                        {% endfor %}
-                    {% else %}
-                        Nenhuma vulnerabilidade conhecida
-                    {% endif %}
-                </td>
-            </tr>
-        </table>
-    </div>
-    {% elif shodan_data and 'error' in shodan_data %}
-    <div class="alert alert-warning text-center mt-3">{{ shodan_data['error'] }}</div>
-    {% endif %}
-</div>
-
-<!-- Rodapé -->
-<div class="footer">
-    &copy; 2025 OSINT Toolkit - Desenvolvido por Andrey Escariao
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
