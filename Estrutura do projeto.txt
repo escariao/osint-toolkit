@@ -1,6 +1,0 @@
-osint-toolkit/
-│── templates/             # HTML do site
-│── static/                # CSS e JS
-│── app.py                 # Código principal do Flask
-│── requirements.txt       # Dependências do projeto
-│── .gitignore             # Arquivos que não serão enviados ao GitHub
