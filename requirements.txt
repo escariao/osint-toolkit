@@ -1,5 +1,4 @@
 Flask
-requests
 python-whois
 gunicorn
-dnspython
+shodan

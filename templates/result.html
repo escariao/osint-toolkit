@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - OSINT Toolkit</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Resultados para: {{ result.domain }}</h1>
+
+    <h2>📧 Emails Vazados</h2>
+    <ul>
+        {% for email in result.emails %}
+            <li>{{ email }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>🔗 Perfis em Redes Sociais</h2>
+    <ul>
+        {% for social in result.socials %}
+            <li><a href="https://{{ social }}" target="_blank">{{ social }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2>🌐 Registros DNS</h2>
+    {% for record, values in result.dns_records.items() %}
+        <h3>{{ record }}</h3>
+        <ul>
+            {% for value in values %}
+                <li>{{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <h2>📝 Informações WHOIS</h2>
+    <p><strong>Registrador:</strong> {{ result.whois_info.registrar }}</p>
+    <p><strong>Data de Criação:</strong> {{ result.whois_info.creation_date }}</p>
+    <p><strong>Data de Expiração:</strong> {{ result.whois_info.expiration_date }}</p>
+    <p><strong>Servidores de Nome:</strong> {{ result.whois_info.name_servers }}</p>
+
+    <h2>⚠️ Vulnerabilidades Conhecidas</h2>
+    <ul>
+        {% for vuln in result.vulnerabilities %}
+            <li><a href="https://{{ vuln }}" target="_blank">{{ vuln }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2>🚨 Status de Blacklist</h2>
+    <p>{{ result.blacklist_status }}</p>
+
+    <br>
+    <a href="/">← Nova Pesquisa</a>
+</body>
+</html>

@@ -4,35 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OSINT Toolkit</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="bg-dark text-white">
-    <div class="container mt-5">
-        <h1 class="text-center text-warning">OSINT Toolkit</h1>
-        <div class="card bg-secondary p-4">
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label">Digite um domínio ou IP:</label>
-                    <input type="text" class="form-control" name="query" placeholder="Exemplo: google.com ou 8.8.8.8" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Buscar</button>
-            </form>
-        </div>
-        {% if error %}
-        <div class="alert alert-danger text-center mt-3">{{ error }}</div>
-        {% endif %}
-        {% if whois_data %}
-        <div class="card bg-secondary p-3 mt-3">
-            <h2 class="text-center">WHOIS</h2>
-            <table class="table table-dark">
-                <tr><th>Domínio</th><td>{{ whois_data.domain_name }}</td></tr>
-                <tr><th>Registrar</th><td>{{ whois_data.registrar }}</td></tr>
-                <tr><th>Criado em</th><td>{{ whois_data.creation_date }}</td></tr>
-                <tr><th>Expira em</th><td>{{ whois_data.expiration_date }}</td></tr>
-            </table>
-        </div>
-        {% endif %}
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<body>
+    <h1>OSINT Toolkit</h1>
+    <p>Insira um domínio ou IP para análise:</p>
+    <form action="/scan" method="POST">
+        <input type="text" name="target" placeholder="exemplo.com ou 192.168.1.1" required>
+        <button type="submit">Analisar</button>
+    </form>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
 </body>
 </html>
