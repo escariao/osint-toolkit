@@ -3,7 +3,7 @@ import whois
 import dns.resolver
 import requests
 import re
-from modules.email_extractor import extract_emails
+from modules.email_breach_checker import extract_emails
 from modules.link_extractor import extract_links
 from modules.metadata_extractor import extract_metadata
 
