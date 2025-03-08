@@ -1,85 +1,79 @@
-# app.py
 from flask import Flask, render_template, request
-import time
-from modules.email_breach_checker import fetch_leaked_emails
-from modules.social_scraper import fetch_social_profiles
-from modules.dns_lookup import fetch_dns_records
-from modules.whois_lookup import fetch_whois_data
-from modules.vulnerability_checker import fetch_vulnerabilities
-from modules.blacklist_check import check_blacklist
-from modules.dorking import google_dork
 import whois
 import dns.resolver
 import requests
-import html
+import re
+from modules.email_extractor import extract_emails
+from modules.link_extractor import extract_links
+from modules.metadata_extractor import extract_metadata
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/scan', methods=['POST'])
-def scan():
-    target = request.form.get('target')
-    if not target:
-        return render_template('index.html', error='Por favor, insira um domínio ou IP.')
-
-    time.sleep(2)  # Previne sobrecarga nas requisições
-
-    emails = fetch_leaked_emails(target)
-    socials = fetch_social_profiles(target)
-    dns_records = fetch_dns_records(target)
-    whois_info = fetch_whois_data(target)
-    vulnerabilities = fetch_vulnerabilities(target)
-    blacklist_status = check_blacklist(target)
-
-    # Correção para evitar exibição errada das redes sociais
-    socials = [social for social in socials if social and social != "Nenhuma rede social encontrada"]
-
-    result_data = {
-        'domain': target,
-        'emails': emails if emails else ['Nenhum email encontrado'],
-        'socials': socials if socials else ['Nenhuma rede social encontrada'],
-        'dns_records': dns_records,
-        'whois_info': whois_info,
-        'vulnerabilities': vulnerabilities if vulnerabilities else ['Nenhuma vulnerabilidade encontrada'],
-        'blacklist_status': blacklist_status
-    }
-
-    return render_template('result.html', result=result_data)
+def get_whois_info(domain):
+    try:
+        w = whois.whois(domain)
+        return w
+    except Exception as e:
+        return str(e)
 
 def get_dns_records(domain):
     records = {}
     try:
-        records['A'] = [r.to_text() for r in dns.resolver.resolve(domain, 'A')]
+        records["A"] = [r.address for r in dns.resolver.resolve(domain, 'A')]
     except:
-        records['A'] = []
+        records["A"] = "Nenhum registro encontrado"
+
     try:
-        records['MX'] = [r.to_text() for r in dns.resolver.resolve(domain, 'MX')]
+        records["MX"] = [r.to_text() for r in dns.resolver.resolve(domain, 'MX')]
     except:
-        records['MX'] = []
+        records["MX"] = "Nenhum registro encontrado"
+
     try:
-        records['TXT'] = [html.unescape(r.to_text()) for r in dns.resolver.resolve(domain, 'TXT')]
+        records["TXT"] = [r.to_text() for r in dns.resolver.resolve(domain, 'TXT')]
     except:
-        records['TXT'] = []
+        records["TXT"] = "Nenhum registro encontrado"
+
     return records
 
-def check_social_presence(username):
-    platforms = {
-        'Twitter': f'https://twitter.com/{username}',
-        'Instagram': f'https://instagram.com/{username}',
-        'GitHub': f'https://github.com/{username}'
+def check_social_presence(domain):
+    social_media_sites = {
+        "Facebook": f"https://www.facebook.com/{domain}",
+        "Twitter": f"https://www.twitter.com/{domain}",
+        "LinkedIn": f"https://www.linkedin.com/company/{domain}",
+        "Instagram": f"https://www.instagram.com/{domain}"
     }
-    found = {}
-    for platform, url in platforms.items():
+    
+    found_profiles = {}
+    for platform, url in social_media_sites.items():
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=3)
             if response.status_code == 200:
-                found[platform] = url
-        except:
+                found_profiles[platform] = url
+        except requests.RequestException:
             pass
-    return found if found else None
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    return found_profiles if found_profiles else None
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        domain = request.form["domain"]
+        whois_data = get_whois_info(domain)
+        dns_records = get_dns_records(domain)
+        emails = extract_emails(domain)
+        links = extract_links(domain)
+        metadata = extract_metadata(domain)
+        social_profiles = check_social_presence(domain)
+
+        return render_template("index.html",
+                               domain=domain,
+                               whois_data=whois_data,
+                               dns_records=dns_records,
+                               emails=emails,
+                               links=links,
+                               metadata=metadata,
+                               social_profiles=social_profiles)
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
