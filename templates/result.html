@@ -16,12 +16,20 @@
         {% endfor %}
     </ul>
 
-    <h2>🔗 Perfis em Redes Sociais</h2>
+<!-- rs -->
+<h2>🔗 Perfis em Redes Sociais</h2>
+{% if result.socials %}
     <ul>
         {% for social in result.socials %}
-            <li><a href="https://{{ social }}" target="_blank">{{ social }}</a></li>
+            {% if social and social != "Nenhuma rede social encontrada" %}
+                <li><a href="https://{{ social }}" target="_blank">{{ social }}</a></li>
+            {% endif %}
         {% endfor %}
     </ul>
+{% else %}
+    <p>Nenhuma rede social encontrada.</p>
+{% endif %}
+
 
     <h2>🌐 Registros DNS</h2>
     {% for record, values in result.dns_records.items() %}
