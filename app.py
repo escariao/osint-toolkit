@@ -6,6 +6,7 @@ from modules.dns_lookup import fetch_dns_records
 from modules.whois_lookup import fetch_whois_data
 from modules.vulnerability_checker import fetch_vulnerabilities
 from modules.blacklist_check import check_blacklist
+from modules.dorking import google_dork
 
 app = Flask(__name__)
 
