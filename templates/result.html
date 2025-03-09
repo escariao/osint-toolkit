@@ -12,12 +12,14 @@
     <h2>Domínio: {{ domain }}</h2>
 
     <h3>Informações WHOIS</h3>
-    <pre>{{ whois_data | default("Nenhuma informação disponível") }}</pre>
+    <pre>{{ whois_data }}</pre>
 
     <h3>Registros DNS</h3>
     <ul>
         {% for record, values in dns_records.items() %}
-            <li><strong>{{ record }}</strong>: {{ values | default("Nenhuma informação disponível") }}</li>
+            <li><strong>{{ record }}</strong>: {{ values }}</li>
+        {% else %}
+            <li>Nenhuma informação disponível.</li>
         {% endfor %}
     </ul>
 
@@ -40,7 +42,7 @@
     </ul>
 
     <h3>Metadados</h3>
-    <pre>{{ metadata | default("Nenhum metadado encontrado") }}</pre>
+    <pre>{{ metadata if metadata else "Nenhum metadado encontrado." }}</pre>
 
     <h3>Perfis em Redes Sociais</h3>
     <ul>
