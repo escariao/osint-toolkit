@@ -32,9 +32,4 @@ O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (O
 | **Render** | Hospedagem do serviço |
 
 ---
-
-## 📌 **Como Usar**
-1️⃣ Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/osint-toolkit.git
-cd osint-toolkit
+O projeto continua em progresso.
