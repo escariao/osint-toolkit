@@ -2,7 +2,6 @@ from flask import Flask, render_template, request
 import whois
 import dns.resolver
 import requests
-import re
 from modules.email_extractor import extract_emails
 from modules.link_extractor import extract_links
 from modules.metadata_extractor import extract_metadata
@@ -19,7 +18,6 @@ def get_whois_info(domain):
         return f"Erro ao obter WHOIS: {str(e)}"
 
 def get_dns_records(domain):
-    """ Obtém registros DNS do domínio. """
     records = {}
     try:
         records["A"] = [r.address for r in dns.resolver.resolve(domain, 'A')]
@@ -39,7 +37,6 @@ def get_dns_records(domain):
     return records
 
 def check_social_presence(domain):
-    """ Verifica presença do domínio em redes sociais. """
     social_media_sites = {
         "Facebook": f"https://www.facebook.com/{domain}",
         "Twitter": f"https://www.twitter.com/{domain}",
@@ -56,43 +53,28 @@ def check_social_presence(domain):
         except requests.RequestException:
             pass
 
-    return found_profiles if found_profiles else None
+    return found_profiles if found_profiles else {}
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         domain = request.form["domain"]
-
-        # Obtendo os dados
+        
         whois_data = get_whois_info(domain)
         dns_records = get_dns_records(domain)
-
-        # Corrigindo chamadas de funções
-        try:
-            emails = extract_emails(domain)  # Verifica se o módulo está correto
-        except Exception as e:
-            emails = f"Erro ao extrair emails: {str(e)}"
-
-        try:
-            links = extract_links("<html></html>", domain)  # Agora passa HTML e base_url corretamente
-        except Exception as e:
-            links = f"Erro ao extrair links: {str(e)}"
-
-        try:
-            metadata = extract_metadata(domain)
-        except Exception as e:
-            metadata = f"Erro ao extrair metadados: {str(e)}"
-
+        emails = extract_emails(domain)
+        links = extract_links(domain)
+        metadata = extract_metadata(domain)
         social_profiles = check_social_presence(domain)
 
         return render_template("result.html",
                                domain=domain,
-                               whois_data=whois_data,
+                               whois_data=whois_data or "Nenhuma informação WHOIS disponível",
                                dns_records=dns_records,
-                               emails=emails,
-                               links=links,
-                               metadata=metadata,
-                               social_profiles=social_profiles)
+                               emails=emails or [],
+                               links=links or [],
+                               metadata=metadata or {},
+                               social_profiles=social_profiles or {})
 
     return render_template("index.html")
 
