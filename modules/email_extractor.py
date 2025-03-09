@@ -1,59 +1,79 @@
 import re
 import requests
+import dns.resolver
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
+from urllib.parse import urljoin
 
-def extract_emails(domain):
+def extract_emails_from_text(text):
     """
-    Extrai emails apenas do domínio pesquisado.
+    Extrai emails, incluindo formatos ofuscados comuns.
+    """
+    email_patterns = [
+        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # Emails normais
+        r'[a-zA-Z0-9._%+-]+\s*\[at\]\s*[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # contato [at] google.com
+        r'[a-zA-Z0-9._%+-]+\s*\(at\)\s*[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # contato(at)google.com
+        r'[a-zA-Z0-9._%+-]+\s*\[arroba\]\s*[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # contato [arroba] google.com
+        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\s*\[dot\]\s*[a-zA-Z]{2,}',  # contato@google[dot]com
+    ]
+    
+    emails = set()
+    for pattern in email_patterns:
+        matches = re.findall(pattern, text, re.IGNORECASE)
+        for email in matches:
+            email = email.replace("[at]", "@").replace("(at)", "@").replace("[arroba]", "@").replace("[dot]", ".")
+            emails.add(email)
+    
+    return list(emails)
 
-    :param domain: O domínio a ser analisado.
-    :return: Lista de emails filtrados.
+def extract_emails_from_dns(domain):
+    """
+    Extrai emails de registros TXT do DNS (SPF, DKIM, DMARC).
     """
     emails = set()
     try:
-        url = f"http://{domain}"
+        txt_records = dns.resolver.resolve(domain, 'TXT')
+        for record in txt_records:
+            record_text = record.to_text()
+            emails.update(extract_emails_from_text(record_text))
+    except:
+        pass
+    return list(emails)
+
+def extract_emails_from_page(url):
+    """
+    Extrai emails de uma página da web.
+    """
+    emails = set()
+    try:
         response = requests.get(url, timeout=5)
         if response.status_code == 200:
-            emails.update(find_emails(response.text, domain))
-
-            # Procurar emails em links internos da página
-            soup = BeautifulSoup(response.text, "html.parser")
-            links = {a["href"] for a in soup.find_all("a", href=True) if domain in a["href"]}
-
-            for link in links:
-                if len(emails) >= 10:  # Evita sobrecarga no servidor
-                    break
-                try:
-                    sub_response = requests.get(link, timeout=5)
-                    if sub_response.status_code == 200:
-                        emails.update(find_emails(sub_response.text, domain))
-                except requests.RequestException:
-                    pass
-
-    except requests.RequestException:
+            emails.update(extract_emails_from_text(response.text))
+    except:
         pass
+    return list(emails)
 
-    return list(emails) if emails else ["Nenhum email encontrado."]
-
-def find_emails(html_content, domain):
+def extract_emails(domain):
     """
-    Aplica regex para encontrar emails e filtra apenas do domínio pesquisado.
-
-    :param html_content: Conteúdo HTML a ser analisado.
-    :param domain: O domínio pesquisado.
-    :return: Lista de emails filtrados.
+    Realiza a busca completa de emails: na página principal, subdomínios e DNS.
     """
-    email_regex = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-    all_emails = set(re.findall(email_regex, html_content))
-
-    # Filtrar apenas emails do domínio pesquisado
-    valid_emails = {email for email in all_emails if email.endswith(f"@{domain}")}
-
-    return valid_emails
+    emails = set()
+    
+    # Buscar emails no site principal
+    emails.update(extract_emails_from_page(f'http://{domain}'))
+    emails.update(extract_emails_from_page(f'https://{domain}'))
+    
+    # Buscar emails nos registros DNS
+    emails.update(extract_emails_from_dns(domain))
+    
+    # Buscar emails em subdomínios conhecidos
+    subdomains = ['support', 'contact', 'help', 'mail', 'info', 'dev', 'admin']
+    for sub in subdomains:
+        sub_url = f'https://{sub}.{domain}'
+        emails.update(extract_emails_from_page(sub_url))
+    
+    return list(emails)
 
 if __name__ == "__main__":
-    # Teste rápido
-    test_domain = "google.com"
-    found_emails = extract_emails(test_domain)
+    domain = "google.com"
+    found_emails = extract_emails(domain)
     print("Emails encontrados:", found_emails)
