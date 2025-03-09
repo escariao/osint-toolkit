@@ -62,7 +62,7 @@
     <h3>Metadados</h3>
     <ul>
         {% for key, value in metadata.items() %}
-            <li><strong>{{ key }}:</strong> {{ value }}</li>
+            <li><strong>{{ key }}:</strong> {{ value if value != 'N/A' else 'Não disponível' }}</li>
         {% endfor %}
     </ul>
 
