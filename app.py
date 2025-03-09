@@ -12,11 +12,9 @@ app = Flask(__name__)
 def get_whois_info(domain):
     try:
         w = whois.whois(domain)
-        if w and isinstance(w, dict):  # Garante que WHOIS retorna um dicionário
-            return w
-        elif w:  # Caso WHOIS retorne um objeto, converte para string
-            return str(w)
-        return "Nenhuma informação WHOIS disponível."
+        if not w:
+            return "Nenhuma informação WHOIS disponível."
+        return str(w) if not isinstance(w, dict) else w
     except Exception as e:
         return f"Erro ao obter WHOIS: {str(e)}"
 
