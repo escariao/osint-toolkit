@@ -1,9 +1,9 @@
 # 🕵️‍♂️ OSINT TOOLKIT 🔍
 
-![GitHub repo size](https://img.shields.io/github/repo-size/seu-usuario/osint-toolkit)
-![GitHub issues](https://img.shields.io/github/issues/seu-usuario/osint-toolkit)
-![GitHub license](https://img.shields.io/github/license/seu-usuario/osint-toolkit)
-![GitHub last commit](https://img.shields.io/github/last-commit/seu-usuario/osint-toolkit)
+![GitHub repo size](https://img.shields.io/github/repo-size/escariao/osint-toolkit)
+![GitHub issues](https://img.shields.io/github/issues/escariao/osint-toolkit)
+![GitHub license](https://img.shields.io/github/license/escariao/osint-toolkit)
+![GitHub last commit](https://img.shields.io/github/last-commit/escariao/osint-toolkit)
 
 O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (OSINT)** projetada para **coletar e analisar** informações públicas de forma eficiente. Ele pode extrair **dados WHOIS, DNS, redes sociais, links, metadados** e **e-mails ofuscados**, permitindo investigações digitais mais profundas.
 
