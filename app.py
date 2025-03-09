@@ -36,6 +36,16 @@ def get_dns_records(domain):
 
     return records
 
+def fetch_html(domain):
+    """ Obtém o HTML da página para análise. """
+    try:
+        response = requests.get(f"http://{domain}", timeout=5)
+        if response.status_code == 200:
+            return response.text
+        return None
+    except requests.RequestException:
+        return None
+
 def check_social_presence(domain):
     social_media_sites = {
         "Facebook": f"https://www.facebook.com/{domain}",
@@ -63,7 +73,10 @@ def index():
         whois_data = get_whois_info(domain)
         dns_records = get_dns_records(domain)
         emails = extract_emails(domain)
-        links = extract_links(domain)
+
+        html_content = fetch_html(domain)  # Obtendo o HTML antes de chamar extract_links()
+        links = extract_links(html_content, f"http://{domain}") if html_content else []
+
         metadata = extract_metadata(domain)
         social_profiles = check_social_presence(domain)
 
