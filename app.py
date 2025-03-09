@@ -11,11 +11,9 @@ app = Flask(__name__)
 def get_whois_info(domain):
     try:
         w = whois.whois(domain)
-        if not w:
-            return "Nenhuma informação WHOIS disponível."
-        return str(w) if not isinstance(w, dict) else w
-    except Exception as e:
-        return f"Erro ao obter WHOIS: {str(e)}"
+        return str(w) if w else "Nenhuma informação WHOIS disponível."
+    except Exception:
+        return "Nenhuma informação WHOIS disponível."
 
 def get_dns_records(domain):
     records = {}
@@ -70,7 +68,7 @@ def index():
     if request.method == "POST":
         domain = request.form["domain"]
         
-        whois_data = get_whois_info(domain)
+        whois_data = get_whois_info(domain)  # WHOIS SEMPRE TERÁ UMA STRING
         dns_records = get_dns_records(domain)
         emails = extract_emails(domain)
 
@@ -82,7 +80,7 @@ def index():
 
         return render_template("result.html",
                                domain=domain,
-                               whois_data=whois_data or "Nenhuma informação WHOIS disponível",
+                               whois_data=whois_data,
                                dns_records=dns_records or {},
                                emails=emails or [],
                                links=links or [],
