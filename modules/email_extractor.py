@@ -1,45 +1,40 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-
-def extract_emails_from_text(text):
-    """ Extrai emails de um texto, incluindo formatos ofuscados. """
-    email_regex = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
-    alt_email_regex = r'([a-zA-Z0-9_.+-]+)\s*\[at\]\s*([a-zA-Z0-9-]+)\s*\[dot\]\s*([a-zA-Z0-9-.]+)'
-    
-    emails = set(re.findall(email_regex, text))
-    alt_emails = re.findall(alt_email_regex, text)
-    
-    for alt_email in alt_emails:
-        emails.add(f"{alt_email[0]}@{alt_email[1]}.{alt_email[2]}")
-    
-    return list(emails)
-
-def fetch_html(url):
-    """ Obtém o HTML de uma página. """
-    try:
-        headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers, timeout=5)
-        if response.status_code == 200:
-            return response.text
-    except requests.RequestException:
-        return None
-    return None
 
 def extract_emails(domain):
-    """ Coleta emails da página principal e de páginas secundárias """
-    base_url = f"http://{domain}"
-    emails_found = {}
+    """
+    Extrai e-mails de um domínio, incluindo formas ofuscadas.
+    """
+    emails = set()
     
-    pages_to_check = ["/", "/contact", "/support", "/help", "/about", "/faq"]
+    try:
+        # Faz a requisição para a página principal do domínio
+        response = requests.get(f"http://{domain}", timeout=5)
+        response.raise_for_status()
+        html_content = response.text
+    except requests.RequestException:
+        return []
     
-    for page in pages_to_check:
-        url = urljoin(base_url, page)
-        html = fetch_html(url)
-        if html:
-            emails = extract_emails_from_text(html)
-            if emails:
-                emails_found[url] = emails
+    # Expressões regulares para capturar e-mails
+    email_patterns = [
+        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",  # Padrão tradicional
+        r"[a-zA-Z0-9._%+-]+\s?\(at\)\s?[a-zA-Z0-9.-]+\s?\(dot\)\s?[a-zA-Z]{2,}",  # E-mails ofuscados
+        r"[a-zA-Z0-9._%+-]+\s?\[at\]\s?[a-zA-Z0-9.-]+\s?\[dot\]\s?[a-zA-Z]{2,}"  # Outra variação de ofuscação
+    ]
     
-    return emails_found
+    for pattern in email_patterns:
+        matches = re.findall(pattern, html_content, re.IGNORECASE)
+        for match in matches:
+            emails.add(match)
+    
+    # Removendo URLs incorretamente capturadas
+    filtered_emails = {email for email in emails if "@" in email and "." in email.split("@")[-1]}
+    
+    return list(filtered_emails)
+
+if __name__ == "__main__":
+    # Teste rápido
+    domain = "example.com"
+    found_emails = extract_emails(domain)
+    print("E-mails encontrados:", found_emails)
