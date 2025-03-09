@@ -10,7 +10,7 @@
     <h1>Resultados para: {{ domain }}</h1>
 
     <h3>📌 WHOIS</h3>
-    <pre>{{ whois_data | default("Nenhuma informação disponível", true) }}</pre>
+    <pre>{{ whois_data or "Nenhuma informação disponível" }}</pre>
 
     <h3>📌 Registros DNS</h3>
     <ul>
