@@ -10,6 +10,7 @@ from modules.metadata_extractor import extract_metadata
 app = Flask(__name__)
 
 def get_whois_info(domain):
+    """ Obtém informações WHOIS do domínio. """
     try:
         w = whois.whois(domain)
         return w
@@ -17,6 +18,7 @@ def get_whois_info(domain):
         return str(e)
 
 def get_dns_records(domain):
+    """ Obtém registros DNS do domínio. """
     records = {}
     try:
         records["A"] = [r.address for r in dns.resolver.resolve(domain, 'A')]
@@ -36,6 +38,7 @@ def get_dns_records(domain):
     return records
 
 def check_social_presence(domain):
+    """ Verifica presença do domínio em redes sociais. """
     social_media_sites = {
         "Facebook": f"https://www.facebook.com/{domain}",
         "Twitter": f"https://www.twitter.com/{domain}",
@@ -58,14 +61,30 @@ def check_social_presence(domain):
 def index():
     if request.method == "POST":
         domain = request.form["domain"]
+
+        # Obtendo os dados
         whois_data = get_whois_info(domain)
         dns_records = get_dns_records(domain)
-        emails = extract_emails(domain)
-        links = extract_links(domain)
-        metadata = extract_metadata(domain)
+
+        # Corrigindo chamadas de funções
+        try:
+            emails = extract_emails(domain)  # Verifica se o módulo está correto
+        except Exception as e:
+            emails = f"Erro ao extrair emails: {str(e)}"
+
+        try:
+            links = extract_links("<html></html>", domain)  # Agora passa HTML e base_url corretamente
+        except Exception as e:
+            links = f"Erro ao extrair links: {str(e)}"
+
+        try:
+            metadata = extract_metadata(domain)
+        except Exception as e:
+            metadata = f"Erro ao extrair metadados: {str(e)}"
+
         social_profiles = check_social_presence(domain)
 
-        return render_template("index.html",
+        return render_template("result.html",
                                domain=domain,
                                whois_data=whois_data,
                                dns_records=dns_records,
@@ -73,6 +92,7 @@ def index():
                                links=links,
                                metadata=metadata,
                                social_profiles=social_profiles)
+
     return render_template("index.html")
 
 if __name__ == "__main__":
