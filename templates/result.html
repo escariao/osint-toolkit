@@ -3,61 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados - OSINT Toolkit</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Resultado - OSINT Toolkit</title>
 </head>
 <body>
-    <h1>Resultados para: {{ domain }}</h1>
+    <h2>Resultado da Análise para: {{ domain }}</h2>
 
-    <h3>📌 WHOIS</h3>
+    <h3>Informações WHOIS</h3>
     <pre>{{ whois_data or "Nenhuma informação disponível" }}</pre>
 
-    <h3>📌 Registros DNS</h3>
-    <ul>
-        {% for record, values in dns_records.items() %}
-            <li><strong>{{ record }}:</strong> {{ values }}</li>
-        {% endfor %}
-    </ul>
+    <h3>Registros DNS</h3>
+    <pre>{{ dns_records }}</pre>
 
-    <h3>📌 Emails Encontrados</h3>
-    <ul>
-        {% if emails %}
+    <h3>Emails Encontrados</h3>
+    {% if emails %}
+        <ul>
             {% for email in emails %}
                 <li>{{ email }}</li>
             {% endfor %}
-        {% else %}
-            <li>Nenhum email encontrado.</li>
-        {% endif %}
-    </ul>
+        </ul>
+    {% else %}
+        <p>Nenhum email encontrado.</p>
+    {% endif %}
 
-    <h3>📌 Links Encontrados</h3>
-    <ul>
-        {% if links %}
+    <h3>Links Encontrados</h3>
+    {% if links %}
+        <ul>
             {% for link in links %}
                 <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
             {% endfor %}
-        {% else %}
-            <li>Nenhum link encontrado.</li>
-        {% endif %}
-    </ul>
+        </ul>
+    {% else %}
+        <p>Nenhum link encontrado.</p>
+    {% endif %}
 
-    <h3>📌 Metadados</h3>
-    <ul>
-        {% for key, value in metadata.items() %}
-            <li><strong>{{ key }}:</strong> {{ value }}</li>
-        {% endfor %}
-    </ul>
+    <h3>Metadados</h3>
+    <pre>{{ metadata }}</pre>
 
-    <h3>📌 Redes Sociais</h3>
-    <ul>
-        {% if social_profiles %}
+    <h3>Perfis Sociais</h3>
+    {% if social_profiles %}
+        <ul>
             {% for platform, url in social_profiles.items() %}
                 <li><a href="{{ url }}" target="_blank">{{ platform }}</a></li>
             {% endfor %}
-        {% else %}
-            <li>Nenhuma rede social encontrada.</li>
-        {% endif %}
-    </ul>
+        </ul>
+    {% else %}
+        <p>Nenhum perfil social encontrado.</p>
+    {% endif %}
 
     <a href="/">Voltar</a>
 </body>
