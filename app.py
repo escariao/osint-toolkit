@@ -83,7 +83,7 @@ def index():
         return render_template("result.html",
                                domain=domain,
                                whois_data=whois_data or "Nenhuma informação WHOIS disponível",
-                               dns_records=dns_records,
+                               dns_records=dns_records or {},
                                emails=emails or [],
                                links=links or [],
                                metadata=metadata or {},
