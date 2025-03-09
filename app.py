@@ -12,9 +12,12 @@ app = Flask(__name__)
 def get_whois_info(domain):
     try:
         w = whois.whois(domain)
-        return w if w else "Nenhuma informação WHOIS disponível."
+        if w and any(w.values()):  # Verifica se há algum dado válido
+            return w
+        return "Nenhuma informação WHOIS disponível."
     except Exception as e:
-        return f"Erro ao obter WHOIS: {e}"
+        return f"Erro ao obter WHOIS: {str(e)}"
+
 
 def get_dns_records(domain):
     """ Obtém registros DNS do domínio. """
