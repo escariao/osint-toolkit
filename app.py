@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import whois
 import dns.resolver
 import requests
+import json
 from modules.email_extractor import extract_emails
 from modules.link_extractor import extract_links
 from modules.metadata_extractor import extract_metadata
@@ -11,7 +12,24 @@ app = Flask(__name__)
 def get_whois_info(domain):
     try:
         w = whois.whois(domain)
-        return str(w) if w else "Nenhuma informação WHOIS disponível."
+        if not w:
+            return "Nenhuma informação WHOIS disponível."
+        
+        # Convertendo para um dicionário legível
+        formatted_whois = {
+            "Domínio": w.domain_name if isinstance(w.domain_name, str) else w.domain_name[0] if w.domain_name else "N/A",
+            "Registradora": w.registrar or "N/A",
+            "Servidor WHOIS": w.whois_server or "N/A",
+            "Última Atualização": w.updated_date[0] if isinstance(w.updated_date, list) else w.updated_date or "N/A",
+            "Criado em": w.creation_date[0] if isinstance(w.creation_date, list) else w.creation_date or "N/A",
+            "Expira em": w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date or "N/A",
+            "Nameservers": w.name_servers if w.name_servers else "N/A",
+            "Status": w.status if w.status else "N/A",
+            "Emails": w.emails if w.emails else "N/A",
+            "Organização": w.org or "N/A",
+            "País": w.country or "N/A"
+        }
+        return formatted_whois
     except Exception:
         return "Nenhuma informação WHOIS disponível."
 
@@ -28,7 +46,8 @@ def get_dns_records(domain):
         records["MX"] = "Nenhum registro encontrado"
 
     try:
-        records["TXT"] = [r.to_text() for r in dns.resolver.resolve(domain, 'TXT')]
+        txt_records = [r.to_text().strip('"') for r in dns.resolver.resolve(domain, 'TXT')]
+        records["TXT"] = txt_records
     except:
         records["TXT"] = "Nenhum registro encontrado"
 
@@ -68,14 +87,20 @@ def index():
     if request.method == "POST":
         domain = request.form["domain"]
         
-        whois_data = get_whois_info(domain)  # WHOIS SEMPRE TERÁ UMA STRING
+        whois_data = get_whois_info(domain)  
         dns_records = get_dns_records(domain)
         emails = extract_emails(domain)
 
-        html_content = fetch_html(domain)  # Obtendo o HTML antes de chamar extract_links()
+        html_content = fetch_html(domain)
         links = extract_links(html_content, f"http://{domain}") if html_content else []
 
         metadata = extract_metadata(domain)
+        metadata = {
+            "Título": metadata.get("title", "Título não encontrado"),
+            "Descrição": metadata.get("description", "Descrição não encontrada"),
+            "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
+        }
+
         social_profiles = check_social_presence(domain)
 
         return render_template("result.html",
@@ -84,7 +109,7 @@ def index():
                                dns_records=dns_records or {},
                                emails=emails or [],
                                links=links or [],
-                               metadata=metadata or {},
+                               metadata=metadata,
                                social_profiles=social_profiles or {})
 
     return render_template("index.html")
