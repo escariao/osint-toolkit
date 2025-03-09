@@ -10,12 +10,11 @@ from modules.metadata_extractor import extract_metadata
 app = Flask(__name__)
 
 def get_whois_info(domain):
-    """ Obtém informações WHOIS do domínio. """
     try:
         w = whois.whois(domain)
-        return w
+        return w if w else "Nenhuma informação WHOIS disponível."
     except Exception as e:
-        return str(e)
+        return f"Erro ao obter WHOIS: {e}"
 
 def get_dns_records(domain):
     """ Obtém registros DNS do domínio. """
