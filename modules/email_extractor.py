@@ -2,78 +2,67 @@ import re
 import requests
 import dns.resolver
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 
 def extract_emails_from_text(text):
     """
-    Extrai emails, incluindo formatos ofuscados comuns.
+    Extrai emails de um texto, incluindo e-mails ofuscados como "exemplo[at]dominio[dot]com".
     """
-    email_patterns = [
-        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # Emails normais
-        r'[a-zA-Z0-9._%+-]+\s*\[at\]\s*[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # contato [at] google.com
-        r'[a-zA-Z0-9._%+-]+\s*\(at\)\s*[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # contato(at)google.com
-        r'[a-zA-Z0-9._%+-]+\s*\[arroba\]\s*[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',  # contato [arroba] google.com
-        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\s*\[dot\]\s*[a-zA-Z]{2,}',  # contato@google[dot]com
-    ]
+    if not text:
+        return []
     
-    emails = set()
-    for pattern in email_patterns:
-        matches = re.findall(pattern, text, re.IGNORECASE)
-        for email in matches:
-            email = email.replace("[at]", "@").replace("(at)", "@").replace("[arroba]", "@").replace("[dot]", ".")
-            emails.add(email)
+    # Regex aprimorada para capturar variações comuns de e-mails
+    email_regex = re.compile(
+        r'([a-zA-Z0-9_.+-]+\s?(@|\[at\]\s?)\s?[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
+        re.IGNORECASE
+    )
+    matches = email_regex.findall(text)
     
-    return list(emails)
+    extracted_emails = set()
+    for match in matches:
+        email = match[0].replace("[at]", "@").replace("[dot]", ".").replace(" ", "")
+        extracted_emails.add(email)
+    
+    return list(extracted_emails)
+
+def extract_emails_from_html(html_content):
+    """
+    Extrai emails do conteúdo HTML da página, buscando no corpo e em meta tags.
+    """
+    if not html_content:
+        return []
+    
+    soup = BeautifulSoup(html_content, 'html.parser')
+    text = soup.get_text() + " " + " ".join([tag["content"] for tag in soup.find_all("meta", content=True)])
+    return extract_emails_from_text(text)
 
 def extract_emails_from_dns(domain):
     """
-    Extrai emails de registros TXT do DNS (SPF, DKIM, DMARC).
+    Extrai emails dos registros TXT do DNS, onde algumas empresas escondem contatos.
     """
     emails = set()
     try:
         txt_records = dns.resolver.resolve(domain, 'TXT')
         for record in txt_records:
-            record_text = record.to_text()
-            emails.update(extract_emails_from_text(record_text))
-    except:
-        pass
-    return list(emails)
-
-def extract_emails_from_page(url):
-    """
-    Extrai emails de uma página da web.
-    """
-    emails = set()
-    try:
-        response = requests.get(url, timeout=5)
-        if response.status_code == 200:
-            emails.update(extract_emails_from_text(response.text))
-    except:
+            emails.update(extract_emails_from_text(record.to_text()))
+    except Exception:
         pass
     return list(emails)
 
 def extract_emails(domain):
     """
-    Realiza a busca completa de emails: na página principal, subdomínios e DNS.
+    Coleta e-mails do HTML da página e dos registros DNS.
     """
     emails = set()
     
-    # Buscar emails no site principal
-    emails.update(extract_emails_from_page(f'http://{domain}'))
-    emails.update(extract_emails_from_page(f'https://{domain}'))
+    # Tenta buscar no HTML da página principal
+    try:
+        response = requests.get(f"http://{domain}", timeout=5)
+        if response.status_code == 200:
+            emails.update(extract_emails_from_html(response.text))
+    except requests.RequestException:
+        pass
     
-    # Buscar emails nos registros DNS
+    # Tenta buscar nos registros DNS
     emails.update(extract_emails_from_dns(domain))
     
-    # Buscar emails em subdomínios conhecidos
-    subdomains = ['support', 'contact', 'help', 'mail', 'info', 'dev', 'admin']
-    for sub in subdomains:
-        sub_url = f'https://{sub}.{domain}'
-        emails.update(extract_emails_from_page(sub_url))
-    
     return list(emails)
-
-if __name__ == "__main__":
-    domain = "google.com"
-    found_emails = extract_emails(domain)
-    print("Emails encontrados:", found_emails)
