@@ -12,12 +12,30 @@
     <h2>Domínio: {{ domain }}</h2>
 
     <h3>Informações WHOIS</h3>
-    <pre>{{ whois_data }}</pre>
+    <ul>
+        {% if whois_data != "Nenhuma informação WHOIS disponível." %}
+            {% for key, value in whois_data.items() %}
+                <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% endfor %}
+        {% else %}
+            <li>{{ whois_data }}</li>
+        {% endif %}
+    </ul>
 
     <h3>Registros DNS</h3>
     <ul>
         {% for record, values in dns_records.items() %}
-            <li><strong>{{ record }}</strong>: {{ values }}</li>
+            <li><strong>{{ record }}:</strong> 
+                {% if values is iterable and values is not string %}
+                    <ul>
+                        {% for val in values %}
+                            <li>{{ val }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    {{ values }}
+                {% endif %}
+            </li>
         {% else %}
             <li>Nenhuma informação disponível.</li>
         {% endfor %}
@@ -42,7 +60,11 @@
     </ul>
 
     <h3>Metadados</h3>
-    <pre>{{ metadata if metadata else "Nenhum metadado encontrado." }}</pre>
+    <ul>
+        {% for key, value in metadata.items() %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
 
     <h3>Perfis em Redes Sociais</h3>
     <ul>
