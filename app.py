@@ -3,11 +3,20 @@ import whois
 import dns.resolver
 import requests
 import json
+from datetime import datetime
 from modules.email_extractor import extract_emails
 from modules.link_extractor import extract_links
 from modules.metadata_extractor import extract_metadata
 
 app = Flask(__name__)
+
+def format_date(date_value):
+    """ Formata datas para o formato DD/MM/AAAA """
+    if isinstance(date_value, list):
+        date_value = date_value[0] if date_value else None
+    if isinstance(date_value, datetime):
+        return date_value.strftime("%d/%m/%Y")
+    return date_value or "N/A"
 
 def get_whois_info(domain):
     try:
@@ -15,17 +24,17 @@ def get_whois_info(domain):
         if not w:
             return "Nenhuma informação WHOIS disponível."
         
-        # Convertendo para um dicionário legível
+        # Convertendo para um dicionário formatado e legível
         formatted_whois = {
             "Domínio": w.domain_name if isinstance(w.domain_name, str) else w.domain_name[0] if w.domain_name else "N/A",
             "Registradora": w.registrar or "N/A",
             "Servidor WHOIS": w.whois_server or "N/A",
-            "Última Atualização": w.updated_date[0] if isinstance(w.updated_date, list) else w.updated_date or "N/A",
-            "Criado em": w.creation_date[0] if isinstance(w.creation_date, list) else w.creation_date or "N/A",
-            "Expira em": w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date or "N/A",
-            "Nameservers": w.name_servers if w.name_servers else "N/A",
-            "Status": w.status if w.status else "N/A",
-            "Emails": w.emails if w.emails else "N/A",
+            "Última Atualização": format_date(w.updated_date),
+            "Criado em": format_date(w.creation_date),
+            "Expira em": format_date(w.expiration_date),
+            "Nameservers": ", ".join(w.name_servers) if w.name_servers else "N/A",
+            "Status": ", ".join(w.status) if w.status else "N/A",
+            "Emails": ", ".join(w.emails) if w.emails else "N/A",
             "Organização": w.org or "N/A",
             "País": w.country or "N/A"
         }
@@ -96,8 +105,8 @@ def index():
 
         metadata = extract_metadata(domain)
         metadata = {
-            "Título": metadata.get("title", "Título não encontrado"),
-            "Descrição": metadata.get("description", "Descrição não encontrada"),
+            "Título": metadata.get("title", "Não disponível"),
+            "Descrição": metadata.get("description", "Não disponível"),
             "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
         }
 
