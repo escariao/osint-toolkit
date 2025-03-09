@@ -1,78 +1,45 @@
 import re
 import requests
-import dns.resolver
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-def extract_emails_from_html(html_content):
-    """
-    Extrai e-mails de um conteúdo HTML, incluindo formatos ofuscados.
-    """
-    email_patterns = [
-        r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+',  # E-mails normais
-        r'([a-zA-Z0-9_.+-]+)\s*\[at\]\s*([a-zA-Z0-9-]+)\s*\[dot\]\s*([a-zA-Z0-9-.]+)',  # e-mails ofuscados com [at] e [dot]
-        r'([a-zA-Z0-9_.+-]+)\s*\(at\)\s*([a-zA-Z0-9-]+)\s*\(dot\)\s*([a-zA-Z0-9-.]+)'
-    ]
+def extract_emails_from_text(text):
+    """ Extrai emails de um texto, incluindo formatos ofuscados. """
+    email_regex = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
+    alt_email_regex = r'([a-zA-Z0-9_.+-]+)\s*\[at\]\s*([a-zA-Z0-9-]+)\s*\[dot\]\s*([a-zA-Z0-9-.]+)'
     
-    emails = set()
-    for pattern in email_patterns:
-        matches = re.findall(pattern, html_content, re.IGNORECASE)
-        for match in matches:
-            if isinstance(match, tuple):
-                email = f"{match[0]}@{match[1]}.{match[2]}"
-            else:
-                email = match
-            emails.add(email)
+    emails = set(re.findall(email_regex, text))
+    alt_emails = re.findall(alt_email_regex, text)
+    
+    for alt_email in alt_emails:
+        emails.add(f"{alt_email[0]}@{alt_email[1]}.{alt_email[2]}")
     
     return list(emails)
 
-def extract_emails_from_dns(domain):
-    """
-    Extrai e-mails dos registros TXT do DNS.
-    """
-    emails = set()
+def fetch_html(url):
+    """ Obtém o HTML de uma página. """
     try:
-        txt_records = dns.resolver.resolve(domain, 'TXT')
-        for record in txt_records:
-            emails.update(re.findall(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', record.to_text()))
-    except:
-        pass
-    return list(emails)
-
-def crawl_additional_pages(domain):
-    """
-    Tenta encontrar e-mails em páginas comuns como /contact, /about, /support.
-    """
-    common_pages = ["contact", "about", "support", "help", "info"]
-    emails = set()
-    for page in common_pages:
-        url = urljoin(f"http://{domain}", page)
-        try:
-            response = requests.get(url, timeout=5)
-            if response.status_code == 200:
-                emails.update(extract_emails_from_html(response.text))
-        except:
-            pass
-    return list(emails)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = requests.get(url, headers=headers, timeout=5)
+        if response.status_code == 200:
+            return response.text
+    except requests.RequestException:
+        return None
+    return None
 
 def extract_emails(domain):
-    """
-    Extrai e-mails de um domínio combinando múltiplas fontes.
-    """
-    emails = set()
+    """ Coleta emails da página principal e de páginas secundárias """
+    base_url = f"http://{domain}"
+    emails_found = {}
     
-    # Tenta extrair do HTML principal
-    try:
-        response = requests.get(f"http://{domain}", timeout=5)
-        if response.status_code == 200:
-            emails.update(extract_emails_from_html(response.text))
-    except:
-        pass
+    pages_to_check = ["/", "/contact", "/support", "/help", "/about", "/faq"]
     
-    # Tenta extrair do DNS
-    emails.update(extract_emails_from_dns(domain))
+    for page in pages_to_check:
+        url = urljoin(base_url, page)
+        html = fetch_html(url)
+        if html:
+            emails = extract_emails_from_text(html)
+            if emails:
+                emails_found[url] = emails
     
-    # Tenta extrair de páginas adicionais
-    emails.update(crawl_additional_pages(domain))
-    
-    return list(emails)
+    return emails_found
