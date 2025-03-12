@@ -34,4 +34,4 @@ Online em: https://osint-toolkit.onrender.com/
 | **Render** | Hospedagem do serviço |
 
 ---
-O projeto continua em progresso.
+O projeto continua...
