@@ -16,8 +16,8 @@ Funcionando em: https://osint-toolkit.onrender.com/
 ✔️ **Extração de E-mails** – Identifica e-mails explícitos e ofuscados em páginas web.  
 ✔️ **Análise de Registros DNS** – Obtém registros **A, MX, TXT** e outros.  
 ✔️ **Coleta de Links** – Identifica links internos e externos em sites.  
-✔️ **Verificação de Redes Sociais** – Detecta perfis associados a domínios.  
-✔️ **Análise de Metadados** – Extrai **título, descrição e palavras-chave**.  
+✔️ **Verificação de Redes Sociais** – Detecta perfis associados a domínios (em desenvolvimento).  
+✔️ **Análise de Metadados** – Extrai **título, descrição e palavras-chave** (em desenvolvimento).  
 
 ---
 
