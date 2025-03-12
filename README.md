@@ -7,7 +7,7 @@
 
 O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (OSINT)** projetada para **coletar e analisar** informações públicas de forma eficiente. Ele pode extrair **dados WHOIS, DNS, redes sociais, links, metadados** e **e-mails ofuscados**, permitindo investigações digitais mais profundas.
 
-Funcionando em: https://osint-toolkit.onrender.com/
+Online em: https://osint-toolkit.onrender.com/
 
 ---
 
