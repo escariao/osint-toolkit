@@ -91,7 +91,7 @@ def check_social_presence(domain):
 
     return found_profiles if found_profiles else {}
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     """ Página inicial com o formulário de busca """
     return render_template("index.html")
