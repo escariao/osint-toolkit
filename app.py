@@ -112,7 +112,7 @@ def index():
 
         social_profiles = check_social_presence(domain)
 
-	return render_template("result.html",
+    	return render_template("result.html",
                                domain=domain,
                                whois_data=whois_data,
                                dns_records=dns_records or {},
