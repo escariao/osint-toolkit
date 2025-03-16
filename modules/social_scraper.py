@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import re
 
 def scrape_social_profiles(domain):
     """
@@ -22,7 +21,7 @@ def scrape_social_profiles(domain):
         links = []
         for a in soup.find_all("a", href=True):
             url = a["href"]
-            if "linkedin.com" in url or "twitter.com" in url or "facebook.com" in url or "instagram.com" in url:
+            if any(social in url for social in ["linkedin.com", "twitter.com", "facebook.com", "instagram.com"]):
                 links.append(url)
         
         social_profiles = {
@@ -35,4 +34,9 @@ def scrape_social_profiles(domain):
         print("Perfis sociais encontrados:", social_profiles)  # Debug
         return social_profiles
     else:
-        return {}
+        return {
+            "Facebook": "Erro ao buscar",
+            "Twitter": "Erro ao buscar",
+            "LinkedIn": "Erro ao buscar",
+            "Instagram": "Erro ao buscar"
+        }
