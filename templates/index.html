@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OSINT Toolkit</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
@@ -12,13 +21,23 @@
         <h1>🔍 OSINT Toolkit</h1>
         <p>Insira um domínio para análise.</p>
 
-        <form action="/" method="POST">
+        <form id="analyzeForm" action="/" method="POST">
             <input type="text" name="domain" placeholder="Exemplo: google.com" required>
             <button type="submit">Analisar</button>
         </form>
+
+        <div class="loading" id="loading">⏳ Iniciando serviço... Aguarde.</div>
     </div>
+    
     <footer>
         <p>OSINT Toolkit by Andrey M. E.</p>
     </footer>
+
+    <script>
+        document.getElementById("analyzeForm").addEventListener("submit", function() {
+            document.getElementById("loading").style.display = "block";
+        });
+    </script>
+
 </body>
 </html>
