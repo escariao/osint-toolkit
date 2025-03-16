@@ -5,11 +5,7 @@
 ![GitHub license](https://img.shields.io/github/license/escariao/osint-toolkit)
 ![GitHub last commit](https://img.shields.io/github/last-commit/escariao/osint-toolkit)
 
-O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (OSINT)** projetada para **coletar e analisar** informações públicas de forma eficiente. Ele pode extrair **dados WHOIS, DNS, redes sociais, links, metadados** e **e-mails ofuscados**, permitindo investigações digitais mais profundas.
-
-🔗 **Online em:** [OSINT Toolkit](https://osint-toolkit.onrender.com/)
-
----
+O **OSINT Toolkit** é uma ferramenta de **Open Source Intelligence (OSINT)** projetada para **coletar e analisar** informações públicas de forma eficiente. Ele pode extrair **dados WHOIS, DNS, redes sociais, links, metadados** e **e-mails ofuscados**, permitindo investigações digitais mais profundas.
 
 ## 🚀 **Principais Funcionalidades**
 ✔️ **Consulta WHOIS** – Obtém informações de registro de domínios.  
@@ -18,8 +14,6 @@ O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (O
 ✔️ **Coleta de Links** – Identifica links internos e externos em sites.  
 ✔️ **Verificação de Redes Sociais** – Detecta perfis associados a domínios.  
 ✔️ **Análise de Metadados** – Extrai **título, descrição e palavras-chave**.  
-
----
 
 ## 🛠 **Tecnologias Utilizadas**
 | Tecnologia | Descrição |
@@ -30,16 +24,32 @@ O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (O
 | **BeautifulSoup** | Extração de dados de páginas web |
 | **DNSPython** | Consulta de registros DNS |
 | **Python-WHOIS** | Análise de domínios WHOIS |
-| **Regex** | Extração avançada de e-mails e padrões |
-| **Gunicorn** | Servidor WSGI para produção |
+| **Regex** | Extração avançada de e-mails |
 | **Render** | Hospedagem do serviço |
-| **Google Dorking** | Busca avançada em mecanismos de pesquisa |
-| **SocialScraper** | Detecção de perfis em redes sociais |
-| **Metadata Extractor** | Extração de metadados de páginas web |
+
+## 📌 **Como Usar**
+
+1️⃣ Clone o repositório:
+```bash
+git clone https://github.com/escariao/osint-toolkit.git
+```
+
+2️⃣ Instale as dependências:
+```bash
+cd osint-toolkit
+pip install -r requirements.txt
+```
+
+3️⃣ Inicie o servidor:
+```bash
+python app.py
+```
+
+Acesse **http://localhost:5000/** no navegador para utilizar a interface.
+
+## 🌍 **Versão Online**
+O OSINT Toolkit também pode ser acessado sem instalação:
+[🔗 OSINT Toolkit Online](https://osint-toolkit.onrender.com/)
 
 ---
-
-## 🚀 **Como Usar**
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/escariao/osint-toolkit.git
+Desenvolvido por **Andrey M. E.** 🕵️‍♂️
