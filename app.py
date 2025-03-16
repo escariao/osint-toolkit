@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import whois
 import dns.resolver
 import requests
+from modules.social_scraper import scrape_social_profiles
 from datetime import datetime
 from modules.email_extractor import extract_emails
 from modules.link_extractor import extract_links
@@ -120,7 +121,7 @@ def index():
             "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
         }
 
-        social_profiles = check_social_presence(domain)
+        social_profiles = scrape_social_profiles(domain)
 
         return render_template("result.html",
                                domain=domain,
