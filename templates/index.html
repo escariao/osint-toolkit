@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
     <div class="container">
-        <h1>OSINT Toolkit</h1>
+        <h1>🔍 OSINT Toolkit</h1>
         <p>Insira um domínio para análise.</p>
+
         <form action="/" method="POST">
             <input type="text" name="domain" placeholder="Exemplo: google.com" required>
             <button type="submit">Analisar</button>
         </form>
     </div>
+
 </body>
 </html>
