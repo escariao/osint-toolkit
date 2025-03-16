@@ -121,7 +121,14 @@ def index():
                                metadata=metadata,
                                social_profiles=social_profiles or {})
 
-    return render_template("index.html")
+    # ✅ Correção: Agora a página inicial carrega sem erro ao não receber uma consulta
+    return render_template("index.html",
+                           whois_data={},
+                           dns_records={},
+                           emails=[],
+                           links=[],
+                           metadata={},
+                           social_profiles={})
 
 if __name__ == "__main__":
     app.run(debug=True)
