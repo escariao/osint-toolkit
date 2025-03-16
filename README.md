@@ -7,7 +7,7 @@
 
 O **OSINT Toolkit** é uma ferramenta avançada de **Open Source Intelligence (OSINT)** projetada para **coletar e analisar** informações públicas de forma eficiente. Ele pode extrair **dados WHOIS, DNS, redes sociais, links, metadados** e **e-mails ofuscados**, permitindo investigações digitais mais profundas.
 
-Online em: https://osint-toolkit.onrender.com/
+🔗 **Online em:** [OSINT Toolkit](https://osint-toolkit.onrender.com/)
 
 ---
 
@@ -16,8 +16,8 @@ Online em: https://osint-toolkit.onrender.com/
 ✔️ **Extração de E-mails** – Identifica e-mails explícitos e ofuscados em páginas web.  
 ✔️ **Análise de Registros DNS** – Obtém registros **A, MX, TXT** e outros.  
 ✔️ **Coleta de Links** – Identifica links internos e externos em sites.  
-✔️ **Verificação de Redes Sociais** – Detecta perfis associados a domínios (em desenvolvimento).  
-✔️ **Análise de Metadados** – Extrai **título, descrição e palavras-chave** (em desenvolvimento).  
+✔️ **Verificação de Redes Sociais** – Detecta perfis associados a domínios.  
+✔️ **Análise de Metadados** – Extrai **título, descrição e palavras-chave**.  
 
 ---
 
@@ -30,8 +30,16 @@ Online em: https://osint-toolkit.onrender.com/
 | **BeautifulSoup** | Extração de dados de páginas web |
 | **DNSPython** | Consulta de registros DNS |
 | **Python-WHOIS** | Análise de domínios WHOIS |
-| **Regex** | Extração avançada de e-mails |
+| **Regex** | Extração avançada de e-mails e padrões |
+| **Gunicorn** | Servidor WSGI para produção |
 | **Render** | Hospedagem do serviço |
+| **Google Dorking** | Busca avançada em mecanismos de pesquisa |
+| **SocialScraper** | Detecção de perfis em redes sociais |
+| **Metadata Extractor** | Extração de metadados de páginas web |
 
 ---
-O projeto continua...
+
+## 🚀 **Como Usar**
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/escariao/osint-toolkit.git
