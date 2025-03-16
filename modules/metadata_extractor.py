@@ -1,10 +1,4 @@
-from bs4 import BeautifulSoup
-
 def extract_metadata(html_content):
-    """
-    Extrai metadados de uma página HTML, incluindo título, descrição e palavras-chave.
-    Verifica outras variações de meta tags comuns.
-    """
     if not html_content:
         return {"title": "N/A", "description": "N/A", "keywords": "N/A"}
 
@@ -16,7 +10,6 @@ def extract_metadata(html_content):
         "keywords": "N/A"
     }
 
-    # Verifica múltiplas variações de meta description
     description_tags = [
         soup.find("meta", attrs={"name": "description"}),
         soup.find("meta", attrs={"property": "og:description"}),
@@ -26,9 +19,8 @@ def extract_metadata(html_content):
     for tag in description_tags:
         if tag and tag.has_attr("content"):
             metadata["description"] = tag["content"].strip()
-            break  # Usa a primeira encontrada
+            break
 
-    # Verifica múltiplas variações de meta keywords
     keywords_tags = [
         soup.find("meta", attrs={"name": "keywords"}),
         soup.find("meta", attrs={"property": "og:keywords"}),
@@ -38,5 +30,8 @@ def extract_metadata(html_content):
         if tag and tag.has_attr("content"):
             metadata["keywords"] = tag["content"].strip()
             break
+
+    # Debug: imprimir saída
+    print("Metadados extraídos:", metadata)
 
     return metadata
