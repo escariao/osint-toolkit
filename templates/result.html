@@ -3,79 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSINT Toolkit - Resultados</title>
+    <title>Resultados da Análise</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Resultados da Análise</h1>
-    
-    <h2>Domínio: {{ domain }}</h2>
+    <div class="container">
+        <h1>Resultados da Análise</h1>
+        <h2>Domínio: {{ domain }}</h2>
 
-    <h3>Informações WHOIS</h3>
-    <ul>
-        {% if whois_data != "Nenhuma informação WHOIS disponível." %}
-            {% for key, value in whois_data.items() %}
-                <li><strong>{{ key }}:</strong> {{ value }}</li>
-            {% endfor %}
-        {% else %}
-            <li>{{ whois_data }}</li>
+        {% if whois_data %}
+        <div class="card">
+            <h3>Informações WHOIS</h3>
+            <table>
+                {% for key, value in whois_data.items() %}
+                <tr>
+                    <td><strong>{{ key }}:</strong></td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         {% endif %}
-    </ul>
 
-    <h3>Registros DNS</h3>
-    <ul>
-        {% for record, values in dns_records.items() %}
-            <li><strong>{{ record }}:</strong> 
-                {% if values is iterable and values is not string %}
-                    <ul>
-                        {% for val in values %}
-                            <li>{{ val }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    {{ values }}
-                {% endif %}
-            </li>
-        {% else %}
-            <li>Nenhuma informação disponível.</li>
-        {% endfor %}
-    </ul>
+        {% if dns_records %}
+        <div class="card">
+            <h3>Registros DNS</h3>
+            <table>
+                {% for key, value in dns_records.items() %}
+                <tr>
+                    <td><strong>{{ key }}:</strong></td>
+                    <td>{{ value | join(', ') }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
 
-    <h3>Emails Encontrados</h3>
-    <ul>
-        {% for email in emails %}
-            <li>{{ email }}</li>
-        {% else %}
-            <li>Nenhum email encontrado.</li>
-        {% endfor %}
-    </ul>
+        {% if emails %}
+        <div class="card">
+            <h3>Emails Encontrados</h3>
+            {% if emails %}
+                <ul>
+                    {% for email in emails %}
+                    <li>{{ email }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nenhum email encontrado.</p>
+            {% endif %}
+        </div>
+        {% endif %}
 
-    <h3>Links Encontrados</h3>
-    <ul>
-        {% for link in links %}
-            <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
-        {% else %}
-            <li>Nenhum link encontrado.</li>
-        {% endfor %}
-    </ul>
+        {% if links %}
+        <div class="card">
+            <h3>Links Encontrados</h3>
+            <ul>
+                {% for link in links %}
+                <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
-    <h3>Metadados</h3>
-    <ul>
-        {% for key, value in metadata.items() %}
-            <li><strong>{{ key }}:</strong> {{ value if value != 'N/A' else 'Não disponível' }}</li>
-        {% endfor %}
-    </ul>
+        {% if metadata %}
+        <div class="card">
+            <h3>Metadados</h3>
+            <table>
+                {% for key, value in metadata.items() %}
+                <tr>
+                    <td><strong>{{ key }}:</strong></td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
 
-    <h3>Perfis em Redes Sociais</h3>
-    <ul>
-        {% for platform, profile_link in social_profiles.items() %}
-            <li><a href="{{ profile_link }}" target="_blank">{{ platform }}</a></li>
-        {% else %}
-            <li>Nenhum perfil encontrado.</li>
-        {% endfor %}
-    </ul>
+        {% if social_profiles %}
+        <div class="card">
+            <h3>Perfis em Redes Sociais</h3>
+            <ul>
+                {% for platform, url in social_profiles.items() %}
+                <li><a href="{{ url }}" target="_blank">{{ platform }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
-    <br>
-    <a href="/">Voltar</a>
+        <a href="/">Voltar</a>
+    </div>
 </body>
 </html>
