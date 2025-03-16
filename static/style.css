@@ -1,90 +1,60 @@
-/* Reset e fonte global */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
 body {
-    background-color: #121212;
-    color: #ffffff;
-    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
     padding: 20px;
 }
-
-/* Cabeçalho */
-h1 {
-    font-size: 2.5rem;
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+h1, h2, h3 {
+    color: #333;
+}
+section {
     margin-bottom: 20px;
-}
-
-/* Formulário */
-form {
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    margin: 20px auto;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    border: none;
+    padding: 15px;
+    background: #fff;
     border-radius: 5px;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    background-color: #333;
-    color: #ffffff;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
 }
-
-button {
+table {
     width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #ff9800;
-    color: #ffffff;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.3s;
+    border-collapse: collapse;
 }
-
-button:hover {
-    background-color: #e68900;
+table, th, td {
+    border: 1px solid #ddd;
 }
-
-/* Resultados */
-h2 {
-    margin-top: 20px;
-    font-size: 1.8rem;
-    color: #ff9800;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    background-color: #1e1e1e;
+th, td {
     padding: 10px;
-    margin: 5px auto;
+    text-align: left;
+}
+th {
+    background: #007BFF;
+    color: white;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+.grid-item {
+    background: #e3e3e3;
+    padding: 10px;
     border-radius: 5px;
-    width: 90%;
-    max-width: 500px;
-    word-break: break-word;
+    text-align: center;
 }
-
-a {
-    color: #ff9800;
+.back-button {
+    display: block;
+    width: 100px;
+    margin: 20px auto;
+    padding: 10px;
+    text-align: center;
+    background: #007BFF;
+    color: white;
     text-decoration: none;
-    font-weight: bold;
-}
-
-a:hover {
-    text-decoration: underline;
+    border-radius: 5px;
 }
