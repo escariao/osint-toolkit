@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+
 def extract_metadata(html_content):
     if not html_content:
         return {"title": "N/A", "description": "N/A", "keywords": "N/A"}
