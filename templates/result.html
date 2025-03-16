@@ -44,14 +44,17 @@
             {% endfor %}
         </ul>
 
-        <h2>📍 Perfis em Redes Sociais</h2>
-        <ul>
-            {% for platform, url in social_profiles.items() %}
-                <li><a href="{{ url }}" target="_blank">{{ platform }}</a></li>
-            {% else %}
-                <li>Nenhuma rede social encontrada.</li>
-            {% endfor %}
-        </ul>
+<h2>📍 Perfis em Redes Sociais</h2>
+<ul>
+    {% for platform, url in social_profiles.items() %}
+        {% if url != "Não encontrado" %}
+            <li><a href="{{ url }}" target="_blank">{{ platform }}</a></li>
+        {% else %}
+            <li>{{ platform }}: Não encontrado</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
 
         <h2>📝 Metadados</h2>
         <table>
