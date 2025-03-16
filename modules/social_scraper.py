@@ -21,9 +21,10 @@ def scrape_social_profiles(domain):
         links = []
         for a in soup.find_all("a", href=True):
             url = a["href"]
-            if any(social in url for social in ["linkedin.com", "twitter.com", "facebook.com", "instagram.com"]):
+            if any(social in url for social in ["linkedin.com/", "twitter.com/", "facebook.com/", "instagram.com/"]):
                 links.append(url)
         
+        # Retorna os primeiros links encontrados para cada rede social
         social_profiles = {
             "Facebook": next((link for link in links if "facebook.com" in link), "Não encontrado"),
             "Twitter": next((link for link in links if "twitter.com" in link), "Não encontrado"),
