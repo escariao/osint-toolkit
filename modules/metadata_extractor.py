@@ -1,39 +1,34 @@
 from bs4 import BeautifulSoup
+import requests
 
-def extract_metadata(html_content):
-    if not html_content:
-        return {"title": "N/A", "description": "N/A", "keywords": "N/A"}
+def extract_metadata(domain):
+    url = f"http://{domain}"
+    
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+    except requests.RequestException:
+        return {"title": "Erro ao acessar", "description": "Erro ao acessar", "keywords": "Erro ao acessar"}
+    
+    soup = BeautifulSoup(response.text, "html.parser")
 
-    soup = BeautifulSoup(html_content, "html.parser")
-
+    # Extraindo metadados de várias formas
     metadata = {
-        "title": soup.title.string.strip() if soup.title and soup.title.string else "N/A",
+        "title": soup.title.string.strip() if soup.title else "N/A",
         "description": "N/A",
         "keywords": "N/A"
     }
 
-    description_tags = [
-        soup.find("meta", attrs={"name": "description"}),
-        soup.find("meta", attrs={"property": "og:description"}),
-        soup.find("meta", attrs={"name": "twitter:description"})
-    ]
-    
-    for tag in description_tags:
-        if tag and tag.has_attr("content"):
-            metadata["description"] = tag["content"].strip()
-            break
+    # Verificar meta description
+    desc_tag = soup.find("meta", attrs={"name": "description"}) or soup.find("meta", attrs={"property": "og:description"})
+    if desc_tag and "content" in desc_tag.attrs:
+        metadata["description"] = desc_tag["content"].strip()
 
-    keywords_tags = [
-        soup.find("meta", attrs={"name": "keywords"}),
-        soup.find("meta", attrs={"property": "og:keywords"}),
-    ]
-    
-    for tag in keywords_tags:
-        if tag and tag.has_attr("content"):
-            metadata["keywords"] = tag["content"].strip()
-            break
+    # Verificar meta keywords
+    keywords_tag = soup.find("meta", attrs={"name": "keywords"})
+    if keywords_tag and "content" in keywords_tag.attrs:
+        metadata["keywords"] = keywords_tag["content"].strip()
 
-    # Debug: imprimir saída
-    print("Metadados extraídos:", metadata)
+    print("Metadados extraídos:", metadata)  # Log para verificar saída
 
     return metadata
