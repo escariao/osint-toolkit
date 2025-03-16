@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import whois
 import dns.resolver
 import requests
-import json
 from datetime import datetime
 from modules.email_extractor import extract_emails
 from modules.link_extractor import extract_links
@@ -22,11 +21,10 @@ def get_whois_info(domain):
     try:
         w = whois.whois(domain)
         if not w:
-            return "Nenhuma informação WHOIS disponível."
-        
-        # Convertendo para um dicionário formatado e legível
-        formatted_whois = {
-            "Domínio": w.domain_name if isinstance(w.domain_name, str) else w.domain_name[0] if w.domain_name else "N/A",
+            return {}
+
+        return {
+            "Domínio": w.domain_name[0] if isinstance(w.domain_name, list) else w.domain_name,
             "Registradora": w.registrar or "N/A",
             "Servidor WHOIS": w.whois_server or "N/A",
             "Última Atualização": format_date(w.updated_date),
@@ -38,9 +36,8 @@ def get_whois_info(domain):
             "Organização": w.org or "N/A",
             "País": w.country or "N/A"
         }
-        return formatted_whois
-    except Exception:
-        return "Nenhuma informação WHOIS disponível."
+    except:
+        return {}
 
 def get_dns_records(domain):
     records = {}
@@ -55,8 +52,7 @@ def get_dns_records(domain):
         records["MX"] = "Nenhum registro encontrado"
 
     try:
-        txt_records = [r.to_text().strip('"') for r in dns.resolver.resolve(domain, 'TXT')]
-        records["TXT"] = txt_records
+        records["TXT"] = [r.to_text().strip('"') for r in dns.resolver.resolve(domain, 'TXT')]
     except:
         records["TXT"] = "Nenhum registro encontrado"
 
@@ -93,38 +89,29 @@ def check_social_presence(domain):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    """ Página inicial com o formulário de busca """
-    return render_template("index.html")
+    if request.method == "POST":
+        domain = request.form["domain"].strip()
 
-@app.route("/resultado", methods=["POST"])
-def resultado():
-    """ Processa a consulta e exibe os resultados """
-    domain = request.form["domain"]
+        if not domain:
+            return render_template("index.html", error="Digite um domínio válido.")
 
-    whois_data = get_whois_info(domain)  
-    dns_records = get_dns_records(domain)
-    emails = extract_emails(domain)
+        # Obtendo todas as informações
+        whois_data = get_whois_info(domain)  
+        dns_records = get_dns_records(domain)
+        emails = extract_emails(domain)
 
-    html_content = fetch_html(domain)
-    links = extract_links(html_content, f"http://{domain}") if html_content else []
+        html_content = fetch_html(domain)
+        links = extract_links(html_content, f"http://{domain}") if html_content else []
 
-    metadata = extract_metadata(domain)
-    metadata = {
-        "Título": metadata.get("title", "Não disponível"),
-        "Descrição": metadata.get("description", "Não disponível"),
-        "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
-    }
+        metadata = extract_metadata(domain)
+        metadata = {
+            "Título": metadata.get("title", "Não disponível"),
+            "Descrição": metadata.get("description", "Não disponível"),
+            "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
+        }
 
-    social_profiles = check_social_presence(domain)
+        social_profiles = check_social_presence(domain)
 
-    return render_template("result.html",
-                           domain=domain,
-                           whois_data=whois_data,
-                           dns_records=dns_records or {},
-                           emails=emails or [],
-                           links=links or [],
-                           metadata=metadata,
-                           social_profiles=social_profiles or {})
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        return render_template("result.html",
+                               domain=domain,
+               
