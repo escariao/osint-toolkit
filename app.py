@@ -91,44 +91,40 @@ def check_social_presence(domain):
 
     return found_profiles if found_profiles else {}
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
-    if request.method == "POST":
-        domain = request.form["domain"]
-        
-        whois_data = get_whois_info(domain)  
-        dns_records = get_dns_records(domain)
-        emails = extract_emails(domain)
+    """ Página inicial com o formulário de busca """
+    return render_template("index.html")
 
-        html_content = fetch_html(domain)
-        links = extract_links(html_content, f"http://{domain}") if html_content else []
+@app.route("/resultado", methods=["POST"])
+def resultado():
+    """ Processa a consulta e exibe os resultados """
+    domain = request.form["domain"]
 
-        metadata = extract_metadata(domain)
-        metadata = {
-            "Título": metadata.get("title", "Não disponível"),
-            "Descrição": metadata.get("description", "Não disponível"),
-            "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
-        }
+    whois_data = get_whois_info(domain)  
+    dns_records = get_dns_records(domain)
+    emails = extract_emails(domain)
 
-        social_profiles = check_social_presence(domain)
+    html_content = fetch_html(domain)
+    links = extract_links(html_content, f"http://{domain}") if html_content else []
 
-        return render_template("result.html",
-                               domain=domain,
-                               whois_data=whois_data,
-                               dns_records=dns_records or {},
-                               emails=emails or [],
-                               links=links or [],
-                               metadata=metadata,
-                               social_profiles=social_profiles or {})
+    metadata = extract_metadata(domain)
+    metadata = {
+        "Título": metadata.get("title", "Não disponível"),
+        "Descrição": metadata.get("description", "Não disponível"),
+        "Palavras-chave": metadata.get("keywords", "Nenhuma palavra-chave disponível")
+    }
 
-    # ✅ Correção: Agora a página inicial carrega sem erro ao não receber uma consulta
-    return render_template("index.html",
-                           whois_data={},
-                           dns_records={},
-                           emails=[],
-                           links=[],
-                           metadata={},
-                           social_profiles={})
+    social_profiles = check_social_presence(domain)
+
+    return render_template("result.html",
+                           domain=domain,
+                           whois_data=whois_data,
+                           dns_records=dns_records or {},
+                           emails=emails or [],
+                           links=links or [],
+                           metadata=metadata,
+                           social_profiles=social_profiles or {})
 
 if __name__ == "__main__":
     app.run(debug=True)
